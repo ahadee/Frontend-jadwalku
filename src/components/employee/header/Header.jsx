@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -6,9 +6,12 @@ import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
-import MenuIcon from '@material-ui/icons/Menu';
+// import MenuIcon from '@material-ui/icons/Menu';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MoreIcon from '@material-ui/icons/MoreVert';
+import { Link,  } from "react-router-dom"
+import { useDispatch, useSelector } from "react-redux";
+import { getUser } from '../../../redux/actions/userActions';
 
 const useStyles = makeStyles((theme) => ({
     grow: {
@@ -79,6 +82,20 @@ export default function Header() {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
+    const profile = useSelector((state) => {
+        return state.userList.user;
+    });
+
+    const dispatch = useDispatch();
+
+    const getProfile = localStorage.getItem("userid");
+
+    // const { id } = useParams();
+
+    useEffect(() => {
+        dispatch(getUser(getProfile))
+    }, [dispatch, getProfile]);
+
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
@@ -110,8 +127,39 @@ export default function Header() {
             open={isMenuOpen}
             onClose={handleMenuClose}
         >
-            <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-            <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
+            <MenuItem onClick={handleMenuClose}>
+                <Link
+                    variant="button"
+                    color="textPrimary"
+                    to="/main-page"
+                    className={classes.link}
+                    style={{ textDecoration: "none" }}
+                >
+                    Menu Utama
+                </Link>
+            </MenuItem>
+            <MenuItem onClick={handleMenuClose}>
+                <Link
+                    variant="button"
+                    color="textPrimary"
+                    to="/profile"
+                    className={classes.link}
+                    style={{ textDecoration: "none" }}
+                >
+                    Profil
+                </Link>
+            </MenuItem>
+            <MenuItem onClick={handleMenuClose}>
+                <Link
+                    variant="button"
+                    color="textPrimary"
+                    to="/"
+                    className={classes.link}
+                    style={{ textDecoration: "none" }}
+                >
+                    Keluar
+                </Link>
+            </MenuItem>
         </Menu>
     );
 
@@ -126,22 +174,6 @@ export default function Header() {
             open={isMobileMenuOpen}
             onClose={handleMobileMenuClose}
         >
-            {/* <MenuItem>
-                <IconButton aria-label="show 4 new mails" color="inherit">
-                    <Badge badgeContent={4} color="secondary">
-                        <MailIcon />
-                    </Badge>
-                </IconButton>
-                <p>Messages</p>
-            </MenuItem> */}
-            {/* <MenuItem>
-                <IconButton aria-label="show 11 new notifications" color="inherit">
-                    <Badge badgeContent={11} color="secondary">
-                        <NotificationsIcon />
-                    </Badge>
-                </IconButton>
-                <p>Notifications</p>
-            </MenuItem> */}
             <MenuItem onClick={handleProfileMenuOpen}>
                 <IconButton
                     aria-label="account of current user"
@@ -155,7 +187,9 @@ export default function Header() {
             </MenuItem>
         </Menu>
     );
-
+    if(!profile) {
+        return 'Loading...'
+    }
     return (
         <div className={classes.grow}>
             <AppBar position="static">
@@ -166,36 +200,15 @@ export default function Header() {
                         color="inherit"
                         aria-label="open drawer"
                     >
-                        <MenuIcon />
+                        {/* <MenuIcon /> */}
                     </IconButton>
                     <Typography className={classes.title} variant="h6" noWrap>
-                        Welcome at JadwalKu User
+                        Selamat Datang, <span>
+                            {profile.last_name}
+                        </span>
                     </Typography>
-                    {/* <div className={classes.search}>
-                        <div className={classes.searchIcon}>
-                            <SearchIcon />
-                        </div>
-                        <InputBase
-                            placeholder="Search…"
-                            classes={{
-                                root: classes.inputRoot,
-                                input: classes.inputInput,
-                            }}
-                            inputProps={{ 'aria-label': 'search' }}
-                        />
-                    </div> */}
                     <div className={classes.grow} />
                     <div className={classes.sectionDesktop}>
-                        {/* <IconButton aria-label="show 4 new mails" color="inherit">
-                            <Badge badgeContent={4} color="secondary">
-                                <MailIcon />
-                            </Badge>
-                        </IconButton>
-                        <IconButton aria-label="show 17 new notifications" color="inherit">
-                            <Badge badgeContent={17} color="secondary">
-                                <NotificationsIcon />
-                            </Badge>
-                        </IconButton> */}
                         <IconButton
                             edge="end"
                             aria-label="account of current user"

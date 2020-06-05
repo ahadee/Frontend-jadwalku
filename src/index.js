@@ -3,10 +3,27 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import { createStore, applyMiddleware, compose } from "redux"
+import allReducers from "./redux/reducers"
+import { Provider } from "react-redux"
+// import thunk from "redux-thunk"
+
+const thunk = store => next => action =>
+  typeof action === 'function'
+    ? action(store.dispatch, store.getState)
+    : next(action)
+
+
+const store = createStore(
+  allReducers,
+  compose(applyMiddleware(thunk))
+);
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <Provider store={store}>
+      <App />
+    </Provider>
   </React.StrictMode>,
   document.getElementById('root')
 );
